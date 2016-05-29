@@ -1,0 +1,12 @@
+{
+    "rules": {
+      ".read": "auth != null",
+      "$msg": {
+        ".write": "!data.exists() || (!newData.exists() && data.child('uid').val() === auth.uid)",
+        ".validate": "newData.hasChildren(['note','time','uid','pos']) 
+          && newData.child('note').isString() && newData.child('time').isNumber() 
+          && newData.child('uid').isString() && newData.child('note').isString()
+          && newData.child('pos/lat').isNumber() && newData.child('pos/lng').isNumber()"
+      }
+    }
+}
