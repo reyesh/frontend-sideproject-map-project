@@ -1,30 +1,25 @@
-app.controller('MainController', ['$scope', "$firebaseArray", function($scope, $firebaseObject) { 
+app.controller('MainController', ['$scope', "fbMessages", function($scope, fbMessages) { 
 
-  var ref = new Firebase("https://map-notes.firebaseio.com/"); 
-  //$scope.data = $firebaseObject(ref);
-  var noteArray = [];
+  $scope.messages = fbMessages;
 
-  ref.on("value", function(snapshot) {
-    // This isn't going to show up in the DOM immediately, because
-    // Angular does not know we have changed this in memory.
-    // $scope.data = snapshot.val();
-    // To fix this, we can use $scope.$apply() to notify Angular that a change occurred.
-    $scope.$apply(function() {
-      $scope.data = snapshot.val();
+  $scope.addMessage = function() {
+    // calling $add on a synchronized array is like Array.push(),
+    // except that it saves the changes to our database!
+    var d = new Date();
+    var seconds = d.getTime();
 
-      for (msg in $scope.data) {
-        $scope.data[msg].marker = new google.maps.Marker({
-          position: $scope.data[msg].pos,
-          map: map,
-          title: $scope.data[msg].note
-        });
-      }
+    console.log(seconds);
+
+    $scope.messages.$add({
+      time: seconds,
+      note: $scope.message
     });
-  });
 
-  $scope.title = 'This Month\'s Bestsellers'; 
-  $scope.promo = 'The most popular books this month.';
-  $scope.caption = '* must be at 16 years or older for this offer to take effect.';
+    // reset the message input
+    $scope.message = "";
+  };
+
+  $scope.title = 'Map Notes'; 
   $scope.products = [
   	{ 
     	name: 'The Book of Trees', 

@@ -4,10 +4,12 @@
 <head>
   <meta charset="utf-8">
 
-  <title>The HTML5 Herald</title>
+  <title>Map Notes - AngularJS 1.x</title>
   <meta name="description" content="The HTML5 Herald">
   <meta name="author" content="SitePoint">
   <meta name="viewport" content="initial-scale=1.0">
+  <!-- Latest compiled and minified CSS -->
+  <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.6/css/bootstrap.min.css" integrity="sha384-1q8mTJOASx8j1Au+a5WDVnPi2lkFfwwEAa8hDDdjZlpLegxhjVME1fgjWPGmkzs7" crossorigin="anonymous">
   <link rel="stylesheet" href="css/styles.css?v=1.0">
   <style>
   html, body {
@@ -31,30 +33,27 @@
 
 </head>
 
-<body>
-
- <body ng-app="myApp">
+<body ng-app="myApp" ng-controller="MainController">
+	<form ng-submit="addMessage()">
+		<input type="text" ng-model="message">
+		<input type="submit" value="Add Message">
+	</form>
+	<p>{{ message }}<p>
     <div class="header">
       <div class="container">
-        <h1>Book End</h1>
+        <h1>{{ title }}</h1>
       </div>
     </div>
 
-    <div class="main" ng-controller="MainController">
       <div class="container">
-        <h1>{{ title }}</h1>
-        <h2>{{ promo }}</h2>
-        <h5>{{ caption }}</h5>
         <table>
-        	<tr ng-repeat="msg in data">
+        	<tr ng-repeat="msg in messages">
 	        	<td>{{ msg.note }}</td>
-	        	<td>{{ msg.pos }}</td>
 	        	<td>{{ msg.time }}</td>
+        		<td><button ng-click="messages.$remove(msg)">x</button></td>
         	</tr>
         </table>
-
       </div>
-    </div>
 
     <div class="footer">
       <div class="container">
