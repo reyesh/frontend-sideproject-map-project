@@ -3,19 +3,24 @@ app.controller('MainController', ['$scope', "fbMessages", function($scope, fbMes
   $scope.messages = fbMessages;
 
   $scope.addMessage = function() {
-    // calling $add on a synchronized array is like Array.push(),
-    // except that it saves the changes to our database!
+
     var d = new Date();
     var seconds = d.getTime();
 
-    console.log(seconds);
+    if(!pos){
 
-    $scope.messages.$add({
-      time: seconds,
-      note: $scope.message
-    });
+      console.log("not allow to post, geolocation not found");
 
-    // reset the message input
+    }else{
+
+      $scope.messages.$add({
+        time: seconds,
+        note: $scope.message,
+        pos: pos
+      });   
+      
+    }
+
     $scope.message = "";
   };
 
