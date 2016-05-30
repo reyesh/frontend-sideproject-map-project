@@ -24,17 +24,73 @@ app.controller('MainController', ['$scope', "fbMessages", function($scope, fbMes
     $scope.message = "";
   };
 
-  $scope.messages.$loaded().then(function() {
+  var infoWindow = [];
+  var messagesLocal = [];
+
+  $scope.messages.$watch(function() {
+
+    function setMapOnAll(map) {
+      for (var i = 0; i < messagesLocal.length; i++) {
+        messagesLocal[i].marker.setMap(map);
+      }
+    } 
+
+    setMapOnAll(null);
+    infoWindow = [];
 
     for(var i=0; i<$scope.messages.length; i++){
+
+      messagesLocal[i] = {
+          note: $scope.messages[i].note,
+          pos: $scope.messages[i].pos,
+          time: $scope.messages[i].time
+       }
+
+
+      console.log(i + ": " + messagesLocal[i].note);
+
+      infoWindow[i] = new google.maps.InfoWindow({
+        content: "<h1>" + messagesLocal[i].note + "</h1>"
+        });
+
+      messagesLocal[i].marker = new google.maps.Marker({
+        position: messagesLocal[i].pos,
+        map: map,
+        title: messagesLocal[i].note
+      });     
+
+      messagesLocal[i].marker.addListener('click', (function(iCopy) {
+        return function() {
+          infoWindow[iCopy].open(map, messagesLocal[iCopy].marker);
+          };
+        })(i));
+    }  
+
+  });
+
+
+
+/*
+
+    for(var i=0; i<$scope.messages.length; i++){
+
+      infoWindow[i] = new google.maps.InfoWindow({
+        content: "<h1>" + $scope.messages[i].note + "</h1>"
+        });
+
       $scope.messages[i].marker = new google.maps.Marker({
         position: $scope.messages[i].pos,
         map: map,
         title: $scope.messages[i].note
-      });      
+      });     
+
+      $scope.messages[i].marker.addListener('click', (function(iCopy) {
+        return function() {
+          infoWindow[iCopy].open(map, $scope.messages[iCopy].marker);
+          };
+        })(i));
     }
-    
-  })
+*/
 
   $scope.title = 'Map Notes'; 
   $scope.products = [
