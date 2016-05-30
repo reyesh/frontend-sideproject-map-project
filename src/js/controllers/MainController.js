@@ -1,7 +1,7 @@
 app.controller('MainController', ['$scope', "fbMessages", function($scope, fbMessages) { 
 
   $scope.messages = fbMessages;
-
+  console.log($scope.messages.length);
   $scope.addMessage = function() {
 
     var d = new Date();
@@ -18,11 +18,23 @@ app.controller('MainController', ['$scope', "fbMessages", function($scope, fbMes
         note: $scope.message,
         pos: pos
       });   
-      
+
     }
 
     $scope.message = "";
   };
+
+  $scope.messages.$loaded().then(function() {
+
+    for(var i=0; i<$scope.messages.length; i++){
+      $scope.messages[i].marker = new google.maps.Marker({
+        position: $scope.messages[i].pos,
+        map: map,
+        title: $scope.messages[i].note
+      });      
+    }
+    
+  })
 
   $scope.title = 'Map Notes'; 
   $scope.products = [
