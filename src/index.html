@@ -42,13 +42,14 @@
 			<input type="text" ng-model="message">
 			<input type="submit" value="Add Message">
 		</form>
-		<p>{{ message }}<p>
+		<p>{{ message }} {{ searchWord }}<p>
+		<input type="text" ng-model="searchWord" ng-change="searchMarkers()">
       </div>
     </div>
 
     <div class="container">
         <table>
-        	<tr ng-repeat="msg in messages">
+        	<tr ng-repeat="msg in messages | filter:searchWord">
 	        	<td>{{ msg.note }}</td>
 	        	<td>{{ msg.time }}</td>
 	        	<td>{{ msg.pos }}</td>
@@ -75,6 +76,8 @@
 	      center: {lat: 37.785, lng: -122.416},
 	      zoom: 17
 	    });
+	    map.setOptions({draggable: false, zoomControl: true, scrollwheel: false, disableDoubleClickZoom: true});
+
 	  }
 
 		function success(position) {

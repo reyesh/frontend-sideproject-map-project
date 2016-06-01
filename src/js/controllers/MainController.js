@@ -4,15 +4,14 @@ app.controller('MainController', ['$scope', "fbMessages", function($scope, fbMes
   console.log($scope.messages.length);
   $scope.addMessage = function() {
 
-    var d = new Date();
-    var seconds = d.getTime();
-
     if(!pos){
 
       console.log("not allow to post, geolocation not found");
 
     }else{
 
+      var d = new Date();
+      var seconds = d.getTime();
       $scope.messages.$add({
         time: seconds,
         note: $scope.message,
@@ -26,18 +25,21 @@ app.controller('MainController', ['$scope', "fbMessages", function($scope, fbMes
 
   var infoWindow = [];
   var messagesLocal = [];
+  var messagesSearchResults = [];
+  var searching = false;
 
-  $scope.messages.$watch(function() {
+  function setMapOnAll(map) {
+    for (var i = 0; i < messagesLocal.length; i++) {
+      messagesLocal[i].marker.setMap(map);
+    }
+  }
 
-    function setMapOnAll(map) {
-      for (var i = 0; i < messagesLocal.length; i++) {
-        messagesLocal[i].marker.setMap(map);
-      }
-    } 
+  $scope.messages.$watch(function() { 
 
     setMapOnAll(null);
     infoWindow = [];
-
+    messagesLocal = [];
+    console.log("inside watch");
     for(var i=0; i<$scope.messages.length; i++){
 
       messagesLocal[i] = {
@@ -46,8 +48,6 @@ app.controller('MainController', ['$scope', "fbMessages", function($scope, fbMes
           time: $scope.messages[i].time
        }
 
-
-      console.log(i + ": " + messagesLocal[i].note);
 
       infoWindow[i] = new google.maps.InfoWindow({
         content: "<h1>" + messagesLocal[i].note + "</h1>"
@@ -64,11 +64,39 @@ app.controller('MainController', ['$scope', "fbMessages", function($scope, fbMes
           infoWindow[iCopy].open(map, messagesLocal[iCopy].marker);
           };
         })(i));
-    }  
+    }
+
+    if(searching){
+      $scope.searchMarkers();
+    } 
+    console.log("searching: " + searching);
+ 
 
   });
 
+  $scope.searchMarkers = function() {
+    //console.log($scope.searchWord);
+    if($scope.searchWord){
+      searching = true;
+    } else {
+      searching = false;
+    }
 
+    console.log("searching: " + searching);
+
+    messagesSearchResults = [];
+
+    for (var x in messagesLocal){
+      if( messagesLocal[x].note.toLowerCase().indexOf($scope.searchWord.toLowerCase()) >= 0 ) {
+        console.log("searching: " + messagesLocal[x].note)
+        messagesSearchResults.push(messagesLocal[x]);
+      }
+    }
+    console.log(messagesSearchResults);
+    //setMapOnAll(null);
+    //infoWindow = [];
+    //messagesLocal = [];
+  };
 
 /*
 
