@@ -24,13 +24,13 @@ app.controller('MainController', ['$scope', "fbMessages", function($scope, fbMes
   };
 
   var infoWindow = [];
-  var messagesLocal = [];
-  var messagesSearchResults = [];
+  $scope.messagesLocal = [];
+  $scope.messagesSearchResults = [];
   var searching = false;
 
   function setMapOnAll(map) {
-    for (var i = 0; i < messagesLocal.length; i++) {
-      messagesLocal[i].marker.setMap(map);
+    for (var i = 0; i < $scope.messagesLocal.length; i++) {
+      $scope.messagesLocal[i].marker.setMap(map);
     }
   }
 
@@ -38,11 +38,11 @@ app.controller('MainController', ['$scope', "fbMessages", function($scope, fbMes
 
     setMapOnAll(null);
     infoWindow = [];
-    messagesLocal = [];
+    $scope.messagesLocal = [];
     console.log("inside watch");
     for(var i=0; i<$scope.messages.length; i++){
 
-      messagesLocal[i] = {
+      $scope.messagesLocal[i] = {
           note: $scope.messages[i].note,
           pos: $scope.messages[i].pos,
           time: $scope.messages[i].time
@@ -50,18 +50,18 @@ app.controller('MainController', ['$scope', "fbMessages", function($scope, fbMes
 
 
       infoWindow[i] = new google.maps.InfoWindow({
-        content: "<h1>" + messagesLocal[i].note + "</h1>"
+        content: "<h1>" + $scope.messagesLocal[i].note + "</h1>"
         });
 
-      messagesLocal[i].marker = new google.maps.Marker({
-        position: messagesLocal[i].pos,
+      $scope.messagesLocal[i].marker = new google.maps.Marker({
+        position: $scope.messagesLocal[i].pos,
         map: map,
-        title: messagesLocal[i].note
+        title: $scope.messagesLocal[i].note
       });     
 
-      messagesLocal[i].marker.addListener('click', (function(iCopy) {
+      $scope.messagesLocal[i].marker.addListener('click', (function(iCopy) {
         return function() {
-          infoWindow[iCopy].open(map, messagesLocal[iCopy].marker);
+          infoWindow[iCopy].open(map, $scope.messagesLocal[iCopy].marker);
           };
         })(i));
     }
@@ -84,15 +84,15 @@ app.controller('MainController', ['$scope', "fbMessages", function($scope, fbMes
 
     console.log("searching: " + searching);
 
-    messagesSearchResults = [];
+    $scope.messagesSearchResults = [];
 
-    for (var x in messagesLocal){
-      if( messagesLocal[x].note.toLowerCase().indexOf($scope.searchWord.toLowerCase()) >= 0 ) {
-        console.log("searching: " + messagesLocal[x].note)
-        messagesSearchResults.push(messagesLocal[x]);
+    for (var x in $scope.messagesLocal){
+      if( $scope.messagesLocal[x].note.toLowerCase().indexOf($scope.searchWord.toLowerCase()) >= 0 ) {
+        console.log("searching: " + $scope.messagesLocal[x].note)
+        $scope.messagesSearchResults.push($scope.messagesLocal[x]);
       }
     }
-    console.log(messagesSearchResults);
+    console.log($scope.messagesSearchResults);
     //setMapOnAll(null);
     //infoWindow = [];
     //messagesLocal = [];

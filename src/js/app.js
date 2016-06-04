@@ -5,7 +5,7 @@ var app = angular.module("myApp", ["firebase"]);
 app.factory("fbMessages", ["$firebaseArray",
   function($firebaseArray) {
     var messagesRef = new Firebase("https://map-notes.firebaseio.com/");
-    var query = messagesRef.orderByChild("time").limitToLast(10);
+    var query = messagesRef.orderByChild("time").limitToLast(30);
   	return $firebaseArray(query);
   }
 ]);

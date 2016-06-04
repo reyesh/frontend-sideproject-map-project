@@ -18,7 +18,49 @@
     padding: 0;
   }
   #map {
-    height: 100%;
+  	position: absolute;
+  	top: 0px;
+  	left: 0px;
+	height:100%;
+	width:100%;
+	z-index: -1;
+  }
+  .msgList {
+  	position: fixed;
+  	top: 0;  	
+  	width: 0px;
+  	background-color: grey;
+  	height: 100%;
+  	overflow-y: auto;
+  	/* white-space: nowrap; */
+  	text-transform: uppercase;
+  }
+
+  .msgList .message {
+  	padding: 20px 50px 20px 20px;
+  	display: block;
+  	/* height: 50px; */
+  	position: relative;
+  	border-bottom: 1px solid #FFF;
+  }
+
+  .msgList p {
+  	display: inline;
+  }
+  .msgList button {
+  	position: absolute;
+  	right: 7px;
+  	top: 25%;
+  }
+  .page-wrap {
+  	float: right;
+  	width: 100%;
+  }  
+  #msgList:target{
+  	width: 20%;
+  }
+  #msgList:target + .page-wrap {
+  	width: 80%;
   }
 </style>
   <script src="https://ajax.googleapis.com/ajax/libs/angularjs/1.5.5/angular.min.js"></script>
@@ -35,38 +77,27 @@
 
 <body ng-app="myApp" ng-controller="MainController">
 
-    <div class="header">
-      <div class="container">
-        <h1>{{ title }}</h1>
-        <form ng-submit="addMessage()">
-			<input type="text" ng-model="message">
-			<input type="submit" value="Add Message">
-		</form>
-		<p>{{ message }} {{ searchWord }}<p>
-		<input type="text" ng-model="searchWord" ng-change="searchMarkers()">
-      </div>
+	<div id="msgList" class="msgList">
+    	<div class="message" ng-repeat="msg in messagesSearchResults">
+    		<p>{{ msg.note }}</p><button type="button" class="btn btn-default" aria-label="Left Align"><span class="glyphicon glyphicon-remove" aria-hidden="true"></span></button>
+    	</div>
     </div>
 
-    <div class="container">
-        <table>
-        	<tr ng-repeat="msg in messages | filter:searchWord">
-	        	<td>{{ msg.note }}</td>
-	        	<td>{{ msg.time }}</td>
-	        	<td>{{ msg.pos }}</td>
-        		<td><button ng-click="messages.$remove(msg)">x</button></td>
-        	</tr>
-        </table>
-    </div>
+    <div class="page-wrap">
+	    <div class="header">
+	      <div class="container">
+	        <h1>{{ title }}</h1>
+	        <form ng-submit="addMessage()">
+				<input type="text" ng-model="message">
+				<input type="submit" value="Add Message">
+			</form>
+			<p>{{ message }} {{ searchWord }}<p>
+			<input type="text" ng-model="searchWord" ng-change="searchMarkers()">
+	      </div>
+	    </div>
+	 	<div id="map"></div>
+   	</div>
 
-    <div class="footer">
-      <div class="container">
-        <h2>Available for iPhone and Android.</h2>
-        <img src="https://s3.amazonaws.com/codecademy-content/projects/shutterbugg/app-store.png" width="120px" />
-        <img src="https://s3.amazonaws.com/codecademy-content/projects/shutterbugg/google-play.png" width="110px" />
-      </div>
-    </div>
-
-	<div id="map"></div>
 	<script>
 	  var map;
 	  var pos;
