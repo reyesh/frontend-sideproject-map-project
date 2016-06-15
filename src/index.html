@@ -25,6 +25,14 @@
 	width:100%;
 	z-index: -1;
   }
+
+  .header {
+    z-index: 10;
+  }
+
+  #map {
+    z-index: 1;
+  }
   .msgList {
   	position: fixed;
   	top: 0;  	
@@ -34,6 +42,7 @@
   	overflow-y: auto;
   	/* white-space: nowrap; */
   	text-transform: uppercase;
+  	z-index: 20;
   }
 
   .msgList .message {
@@ -62,41 +71,77 @@
   #msgList:target + .page-wrap {
   	width: 80%;
   }
+  #msgList:target + .page-wrap .dimmer {
+  	display: none;
+  }  
+  .dimmer {
+  	position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    height: 100%;
+    z-index: 10;
+    display: none;
+    background-color: #333;
+    -moz-opacity: .5;
+    -khtml-opacity: .5;
+    -webkit-opacity: .5;
+    opacity: .5;
+  }
 </style>
   <script src="https://ajax.googleapis.com/ajax/libs/angularjs/1.5.5/angular.min.js"></script>
   <!--[if lt IE 9]>
     <script src="http://html5shiv.googlecode.com/svn/trunk/html5.js"></script>
   <![endif]-->
   <!-- Firebase -->
-  <script src="https://cdn.firebase.com/js/client/2.4.0/firebase.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/3.0.3/firebase.js"></script>
 
   <!-- AngularFire -->
-  <script src="https://cdn.firebase.com/libs/angularfire/1.2.0/angularfire.min.js"></script>
+  <script src="https://cdn.firebase.com/libs/angularfire/2.0.1/angularfire.min.js"></script>
+  <script type="text/javascript">
+
+  // Initialize Firebase
+  var config = {
+    apiKey: "AIzaSyAwRQ9zcwdAK6V25ZqT38j6PbkaVr2xCWE",
+    authDomain: "map-notes.firebaseapp.com",
+    databaseURL: "https://map-notes.firebaseio.com",
+    storageBucket: "firebase-map-notes.appspot.com",
+  };
+
+  firebase.initializeApp(config);
+
+  </script>
 
 </head>
 
 <body ng-app="myApp" ng-controller="MainController">
 
 	<div id="msgList" class="msgList">
-    	<div class="message" ng-repeat="msg in messagesSearchResults">
-    		<p>{{ msg.note }}</p><button type="button" class="btn btn-default" aria-label="Left Align"><span class="glyphicon glyphicon-remove" aria-hidden="true"></span></button>
-    	</div>
-    </div>
+    <form class="form-inline">
+      <div class="form-group">
+        <div class="input-group">
+          <input type="text" class="form-control" id="exampleInputAmount" placeholder="Search">
+        </div>
+      </div>
+    </form>
+  	<div class="message" ng-repeat="msg in messagesSearchResults | filter:searchWord">
+  		<p>{{ msg.note }}</p><button type="button" class="btn btn-default" aria-label="Left Align"><span class="glyphicon glyphicon-remove" aria-hidden="true"></span></button>
+  	</div>
+  </div>
 
-    <div class="page-wrap">
-	    <div class="header">
-	      <div class="container">
-	        <h1>{{ title }}</h1>
-	        <form ng-submit="addMessage()">
-				<input type="text" ng-model="message">
-				<input type="submit" value="Add Message">
-			</form>
-			<p>{{ message }} {{ searchWord }}<p>
-			<input type="text" ng-model="searchWord" ng-change="searchMarkers()">
-	      </div>
-	    </div>
-	 	<div id="map"></div>
-   	</div>
+  <div class="page-wrap">
+    <div class="header">
+        <h1>{{ title }}</h1>
+        <form ng-submit="addMessage()">
+    			<input type="text" ng-model="message">
+    			<input type="submit" value="Add Message">
+    		</form>
+		    <p>{{ message }} {{ searchWord }}<p>
+		    <input type="text" ng-model="searchWord" ng-change="searchMarkers()">
+    </div>
+ 	<div id="map"></div>
+ 	<div class="dimmer"></div>
+ 	</div>
 
 	<script>
 	  var map;

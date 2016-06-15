@@ -2,6 +2,8 @@ app.controller('MainController', ['$scope', "fbMessages", function($scope, fbMes
 
   $scope.messages = fbMessages;
   console.log($scope.messages.length);
+  
+  //function to add message
   $scope.addMessage = function() {
 
     if(!pos){
