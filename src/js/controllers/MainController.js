@@ -1,8 +1,10 @@
 app.controller('MainController', ['$scope', "fbMessages", function($scope, fbMessages) { 
 
-  $scope.messages = fbMessages;
-  console.log($scope.messages.length);
-  
+  //firebase array
+  var messages = fbMessages;
+  var searching = false;
+  $scope.messagesLocal = [];
+
   //function to add message
   $scope.addMessage = function() {
 
@@ -14,7 +16,7 @@ app.controller('MainController', ['$scope', "fbMessages", function($scope, fbMes
 
       var d = new Date();
       var seconds = d.getTime();
-      $scope.messages.$add({
+      messages.$add({
         time: seconds,
         note: $scope.message,
         pos: pos
@@ -23,81 +25,77 @@ app.controller('MainController', ['$scope', "fbMessages", function($scope, fbMes
     }
 
     $scope.message = "";
+
   };
 
   var infoWindow = [];
-  $scope.messagesLocal = [];
-  $scope.messagesSearchResults = [];
-  var searching = false;
 
   function setMapOnAll(map) {
+
     for (var i = 0; i < $scope.messagesLocal.length; i++) {
       $scope.messagesLocal[i].marker.setMap(map);
     }
+
   }
 
-  $scope.messages.$watch(function() { 
+  function makeLocalArray(fbArray){
 
     setMapOnAll(null);
     infoWindow = [];
-    $scope.messagesLocal = [];
-    console.log("inside watch");
-    for(var i=0; i<$scope.messages.length; i++){
+
+    for(var i=0; i<fbArray.length; i++){
 
       $scope.messagesLocal[i] = {
-          note: $scope.messages[i].note,
-          pos: $scope.messages[i].pos,
-          time: $scope.messages[i].time
-       }
-
+          note: fbArray[i].note,
+          pos: fbArray[i].pos,
+          time: fbArray[i].time
+      }
 
       infoWindow[i] = new google.maps.InfoWindow({
         content: "<h1>" + $scope.messagesLocal[i].note + "</h1>"
         });
 
       $scope.messagesLocal[i].marker = new google.maps.Marker({
-        position: $scope.messagesLocal[i].pos,
-        map: map,
-        title: $scope.messagesLocal[i].note
-      });     
+          position: $scope.messagesLocal[i].pos,
+          map: map,
+          title: $scope.messagesLocal[i].note
+        });
 
       $scope.messagesLocal[i].marker.addListener('click', (function(iCopy) {
         return function() {
           infoWindow[iCopy].open(map, $scope.messagesLocal[iCopy].marker);
           };
         })(i));
+
     }
 
-    if(searching){
+    $scope.messagesSearchResults = $scope.messagesLocal;
+
+  }
+
+
+  messages.$watch(function() {
+
+    makeLocalArray(messages);
+
+    if($scope.searchWord){
       $scope.searchMarkers();
-    } 
-    console.log("searching: " + searching);
- 
+    }
 
   });
 
   $scope.searchMarkers = function() {
-    //console.log($scope.searchWord);
-    if($scope.searchWord){
-      searching = true;
-    } else {
-      searching = false;
-    }
-
-    console.log("searching: " + searching);
+    
+    console.log("index search");
 
     $scope.messagesSearchResults = [];
 
     for (var x in $scope.messagesLocal){
       if( $scope.messagesLocal[x].note.toLowerCase().indexOf($scope.searchWord.toLowerCase()) >= 0 ) {
-        console.log("searching: " + $scope.messagesLocal[x].note)
         $scope.messagesSearchResults.push($scope.messagesLocal[x]);
       }
     }
-    console.log($scope.messagesSearchResults);
-    //setMapOnAll(null);
-    //infoWindow = [];
-    //messagesLocal = [];
+
   };
 
 /*
